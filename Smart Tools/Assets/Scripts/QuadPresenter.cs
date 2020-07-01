@@ -49,9 +49,13 @@ public class QuadPresenter : ReactivePresenter<QuadModel>
 
         Vector2Int playerPos = _playerModel.WorldToQuadPosition();
 
-        if (playerPos.x-3> _quadModel.Position.Value.x ||
-            playerPos.y-3> _quadModel.Position.Value.y)
+        if (playerPos.x> _quadModel.Position.Value.x ||
+            playerPos.y> _quadModel.Position.Value.y)
         {
+
+            if (_roadModel.IsQuadStartPanel(this))
+                return;
+
             gameObject.SetActive(false);
             _roadModel.ResetRoad();
         }

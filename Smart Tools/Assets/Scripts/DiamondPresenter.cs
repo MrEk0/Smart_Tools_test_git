@@ -37,7 +37,7 @@ public class DiamondPresenter : ReactivePresenter<DiamondModel>
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<PlayerMovement>())
+        if (other.GetComponent<PlayerMovementPresenter>())
         {
             transform.SetParent(null);
             gameObject.SetActive(false);

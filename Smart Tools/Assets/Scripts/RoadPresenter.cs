@@ -4,14 +4,12 @@ using UnityEngine;
 using Zenject;
 
 
-public enum RoadDirections
-{
-    Right,
-    Forward
-}
+
 
 public class RoadPresenter : ReactivePresenter<RoadModel>
 {
+    public Transform startPanel;
+    [SerializeField] int _startQuadSize = 3;
     [SerializeField] int _visibleQuads = 20;
     [SerializeField] float _diamondChance = 20;
     
@@ -42,13 +40,14 @@ public class RoadPresenter : ReactivePresenter<RoadModel>
 
     private void GenerateStartPlatform()
     {
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < _startQuadSize; i++)
         {
-            for (int j = 0; j < 3; j++)
+            for (int j = 0; j < _startQuadSize; j++)
             {
                 QuadPresenter quadPresenter = _quadFactory.Create(new Vector2(i, j));
-                _roadModel.AddQuad(quadPresenter);             
-                quadPresenter.transform.SetParent(transform);            
+                //_roadModel.AddQuad(quadPresenter);  
+                _roadModel.AddStartPanelQuad(quadPresenter);
+                quadPresenter.transform.SetParent(startPanel);            
             }
         }
     }
