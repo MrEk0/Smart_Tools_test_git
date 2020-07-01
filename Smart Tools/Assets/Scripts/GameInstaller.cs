@@ -16,6 +16,7 @@ public class GameInstaller : MonoInstaller
         Container.Bind<PointsModel>().AsSingle();
         Container.Bind<DiamondModel>().AsTransient();
         Container.Bind<GameOverModel>().AsSingle();
+        Container.Bind<QuadTools>().AsSingle();
 
         Container.BindFactory<Vector2, QuadPresenter, QuadPresenter.Factory>().FromComponentInNewPrefab(quadPrefab);
         Container.BindFactory<Vector2, DiamondPresenter, DiamondPresenter.Factory>().FromComponentInNewPrefab(diamondPrefab);

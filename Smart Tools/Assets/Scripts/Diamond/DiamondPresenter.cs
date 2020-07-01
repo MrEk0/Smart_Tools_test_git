@@ -8,16 +8,16 @@ public class DiamondPresenter : ReactivePresenter<DiamondModel>
 {
     private DiamondModel _diamondModel;
     public DiamondModel DiamondModel => _diamondModel;
-    private PlayerModel _playerModel;
     private PointsModel _pointsModel;
+    private QuadTools _quadTools;
 
     [Inject]
-    private void Construct(DiamondModel diamondModel, Vector2 modelPosition, PlayerModel playerModel, PointsModel pointsModel)
+    private void Construct(DiamondModel diamondModel, Vector2 modelPosition, PointsModel pointsModel, QuadTools quadTools)
     {
         _diamondModel = diamondModel;
         _diamondModel.Position.Value = modelPosition;
-        _playerModel = playerModel;
         _pointsModel = pointsModel;
+        _quadTools = quadTools;
         SetModel(_diamondModel);
     }
 
@@ -31,16 +31,16 @@ public class DiamondPresenter : ReactivePresenter<DiamondModel>
 
     private void OnPositionChanged()
     {
-        name = "Diamond " + _diamondModel.Position.Value;
-        transform.localPosition = new Vector3(2 * _diamondModel.Position.Value.x, 0.5f, 2 * _diamondModel.Position.Value.y);
+        name = "Diamond " + _diamondModel.Position.Value;//delete
+        transform.localPosition = _quadTools.QuadToWorldPosition(_diamondModel.Position.Value);
     }
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<PlayerMovementPresenter>())
         {
-            transform.SetParent(null);
             gameObject.SetActive(false);
+            transform.SetParent(null);
             _pointsModel.ReceivePoints();
         }
     }

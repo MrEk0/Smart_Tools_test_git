@@ -1072,6 +1072,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65fe09c364632094ab1c49b3fbdec325, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  quadPrefab: {fileID: 3549589261897396393, guid: 613c643c10a886341ba0daf00d3bad4a,
+    type: 3}
   startPanel: {fileID: 109273316}
   _startQuadSize: 3
   _visibleQuads: 20

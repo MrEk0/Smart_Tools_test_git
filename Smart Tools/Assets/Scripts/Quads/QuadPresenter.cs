@@ -12,16 +12,25 @@ public class QuadPresenter : ReactivePresenter<QuadModel>
 
     private PlayerModel _playerModel;
     private RoadModel _roadModel;
+    private QuadTools _quadTools;
+
+    private float quadSize;
 
     [Inject]
-    private  void Construct(Vector2 modelPos, QuadModel quadModel, PlayerModel player, RoadModel roadModel)
+    private  void Construct(Vector2 modelPos, QuadModel quadModel, PlayerModel player, RoadModel roadModel, QuadTools quadTools)
     {
         quadModel.Position.Value = modelPos;
 
         _roadModel = roadModel;
         _playerModel = player;
         _quadModel = quadModel;
+        _quadTools = quadTools;
         SetModel(_quadModel);
+    }
+
+    private void Awake()//can improve?
+    {
+        quadSize = transform.localScale.x;
     }
 
     protected override void OnEnable()
@@ -31,29 +40,26 @@ public class QuadPresenter : ReactivePresenter<QuadModel>
             .FirstOrDefault()
             .Subscribe(xs => { OnPositionChanged(); }).AddTo(Subscriptions);
 
-        _playerModel.WorldPosition
+        _playerModel.Position
                 .ObserveEveryValueChanged(x => x.Value)
                 .Subscribe(xs => { OnPlayerPositionChanged(); }).AddTo(Subscriptions);
     }
 
     private void OnPositionChanged()
     {
-        name = "Quad " + _quadModel.Position.Value;
-        transform.localPosition = new Vector3(2 * _quadModel.Position.Value.x, 0, 2 * _quadModel.Position.Value.y);
+        name = "Quad " + _quadModel.Position.Value;//delete
+        //transform.localPosition = new Vector3(quadSize * _quadModel.Position.Value.x, 0, quadSize * _quadModel.Position.Value.y);
+        transform.localPosition = _quadTools.QuadToWorldPosition(_quadModel.Position.Value);
     }
 
     private void OnPlayerPositionChanged()
     {
-        if (!_roadModel.IsQuadExist())
-            return;
-
-        Vector2Int playerPos = _playerModel.WorldToQuadPosition();
-
-        if (playerPos.x> _quadModel.Position.Value.x ||
-            playerPos.y> _quadModel.Position.Value.y)
+        //Vector2Int playerPos = _playerModel.WorldToQuadPosition();
+        //Debug.Log(playerPos)
+        if (_playerModel.Position.Value.x> _quadModel.Position.Value.x ||
+            _playerModel.Position.Value.y> _quadModel.Position.Value.y)
         {
-
-            if (_roadModel.IsQuadStartPanel(this))
+            if (_roadModel.IsQuadStartPanel(this))//!!!!!
                 return;
 
             gameObject.SetActive(false);

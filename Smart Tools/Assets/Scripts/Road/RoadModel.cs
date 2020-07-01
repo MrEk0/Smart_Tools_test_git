@@ -80,7 +80,7 @@ public class RoadModel
         return _lastQuad;
     }
 
-    public void ResetRoad()
+    public void ResetRoad()//refactoring
     {
         QuadPresenter firstQuad = _quads.Peek();
 
@@ -120,7 +120,7 @@ public class RoadModel
         }
     }
 
-    public bool IsThereQuadBeneath(Vector2Int quadPosition)
+    public bool IsThereQuadBeneath(Vector2 quadPosition)//improve
     {
         foreach (var quad in _quads)
         {
@@ -130,27 +130,25 @@ public class RoadModel
             }
         }
 
-        foreach (var quad in _startPanelQuads)
+        if (_startPanelQuads.Count != 0)
         {
-            if (quad.QuadModel.Position.Value == quadPosition)
+            foreach (var quad in _startPanelQuads)
             {
-                return true;
+                if (quad.QuadModel.Position.Value == quadPosition)
+                {
+                    return true;
+                }
             }
         }
 
         return false;
     }
 
-    //public bool IsStartPanelPassed()
-    //{
-    //    if(_startPanelQuads.Count==0)
-    //    {
-    //        return true;
-    //    }
-    //    return false;
-    //}
-    public bool IsQuadStartPanel(QuadPresenter quad)
+    public bool IsQuadStartPanel(QuadPresenter quad)//improve
     {
+        //if (_startPanelQuads.Count != 0)
+        //    return false;
+
         if (_startPanelQuads.Contains(quad))
         {
             return true;
@@ -161,6 +159,8 @@ public class RoadModel
             {
                 quadPanel.gameObject.SetActive(false);
             }
+            _startPanelQuads.Clear();
+            //Debug.Log(_startPanelQuads.Count);
             return false;
         }
     }
