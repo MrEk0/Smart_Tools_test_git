@@ -70,9 +70,6 @@ public class RoadPresenter : ReactivePresenter<RoadModel>
 
     private void GenerateDiamonds(Vector2 position, Transform parentTransform)
     {
-        //int chance= Random.Range(0, 100);
-        //if (chance > _diamondChance)
-        //    return;
         if (!_roadModel.CanSpawnDiamond())
             return;
 
