@@ -11,6 +11,8 @@ public class DiamondPresenter : ReactivePresenter<DiamondModel>
     private PointsModel _pointsModel;
     private QuadTools _quadTools;
 
+    private float height;
+
     [Inject]
     private void Construct(DiamondModel diamondModel, Vector2 modelPosition, PointsModel pointsModel, QuadTools quadTools)
     {
@@ -21,6 +23,10 @@ public class DiamondPresenter : ReactivePresenter<DiamondModel>
         SetModel(_diamondModel);
     }
 
+    private void Awake()
+    {
+        height = transform.localScale.y * 0.5f;
+    }
     protected override void OnEnable()
     {
         _diamondModel.Position
@@ -31,8 +37,9 @@ public class DiamondPresenter : ReactivePresenter<DiamondModel>
 
     private void OnPositionChanged()
     {
-        name = "Diamond " + _diamondModel.Position.Value;//delete
-        transform.localPosition = _quadTools.QuadToWorldPosition(_diamondModel.Position.Value);
+        Vector3 worldPos= _quadTools.QuadToWorldPosition(_diamondModel.Position.Value);
+        worldPos.y = height;
+        transform.localPosition = worldPos;
     }
 
     private void OnTriggerEnter(Collider other)

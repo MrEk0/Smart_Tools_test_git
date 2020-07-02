@@ -23,7 +23,13 @@ public class RoadModel
     private float _diamondChance;
     private int _directionsLength;
 
-    public void Init(float diamondChance, DiamondPresenter.Factory factory)
+    [Inject]
+    private void Construct(DiamondPresenter.Factory factory)
+    {
+        _factory = factory;
+    }
+
+    public void Init(float diamondChance)
     {
         _quads = new Queue<QuadPresenter>();
         _diamonds = new Queue<DiamondPresenter>();
@@ -31,7 +37,6 @@ public class RoadModel
 
         _diamondChance = diamondChance;
         _directionsLength= Enum.GetNames(typeof(RoadDirections)).Length;
-        _factory = factory;
     }
 
     public void AddQuad(QuadPresenter quad)
@@ -65,89 +70,89 @@ public class RoadModel
         }
     }
 
-    public bool IsQuadExist()
-    {
-        return _quads.Count!=0;
-    }
-
     public void RearrangeQuad(QuadPresenter quad)
     {
         AddQuad(_quads.Dequeue());
     }
 
-    public QuadPresenter GetLastQuad()
+    public Vector2 GetRandomDirection()
     {
-        return _lastQuad;
-    }
-
-    public void ResetRoad()//refactoring
-    {
-        QuadPresenter firstQuad = _quads.Peek();
-
-        Vector2 quadPos = GetLastQuad().GetPosition();
+        Vector2 lastQuadPos = _lastQuad.GetPosition();
         RoadDirections direction = (RoadDirections)Random.Range(0, _directionsLength);
 
         switch (direction)
         {
             case RoadDirections.Forward:
-                quadPos.y++;
+                lastQuadPos.y++;
                 break;
             case RoadDirections.Right:
-                quadPos.x++;
+                lastQuadPos.x++;
                 break;
         }
+        return lastQuadPos;
+    }
 
-        firstQuad.QuadModel.Position.Value = quadPos;
+    public void ResetRoad()
+    {
+        QuadPresenter firstQuad = _quads.Peek();
+
+        Vector2 newQuadPos = GetRandomDirection();
+        firstQuad.QuadModel.Position.Value = newQuadPos;
         firstQuad.gameObject.SetActive(true);
         RearrangeQuad(firstQuad);
 
-        int diamondChance = Random.Range(0, 100);
-        if (diamondChance > _diamondChance)
+        if (!CanSpawnDiamond())
             return;
 
         DiamondPresenter diamond = ResetDiamondPosition();
         if (diamond != null)
         {
-            diamond.DiamondModel.Position.Value = quadPos;
+            diamond.DiamondModel.Position.Value = newQuadPos;
             diamond.gameObject.SetActive(true);
             diamond.transform.SetParent(firstQuad.transform);
         }
         else
         {
-            DiamondPresenter diamondPresenter = _factory.Create(quadPos);
+            DiamondPresenter diamondPresenter = _factory.Create(newQuadPos);
             diamondPresenter.transform.SetParent(firstQuad.transform);
             AddDiamond(diamondPresenter);
         }
     }
 
-    public bool IsThereQuadBeneath(Vector2 quadPosition)//improve
+    public bool CanSpawnDiamond()
     {
-        foreach (var quad in _quads)
-        {
-            if(quad.QuadModel.Position.Value==quadPosition)
-            {
-                return true;
-            }
-        }
+        int diamondChance = Random.Range(0, 100);
+        return diamondChance < _diamondChance;
+    }
 
+    public bool IsThereQuadBeneath(Vector2 quadPosition)
+    {
         if (_startPanelQuads.Count != 0)
         {
             foreach (var quad in _startPanelQuads)
             {
-                if (quad.QuadModel.Position.Value == quadPosition)
+                if (quad.GetPosition() == quadPosition)
                 {
                     return true;
                 }
             }
         }
 
+        foreach (var quad in _quads)
+        {
+            if (quad.GetPosition() == quadPosition)
+            {
+                return true;
+            }
+        }
+
         return false;
     }
 
-    public bool IsQuadStartPanel(QuadPresenter quad)//improve
+    public bool IsQuadStartPanel(QuadPresenter quad)
     {
-        //if (_startPanelQuads.Count != 0)
-        //    return false;
+        if (_startPanelQuads.Count == 0)
+            return false;
 
         if (_startPanelQuads.Contains(quad))
         {
@@ -160,7 +165,6 @@ public class RoadModel
                 quadPanel.gameObject.SetActive(false);
             }
             _startPanelQuads.Clear();
-            //Debug.Log(_startPanelQuads.Count);
             return false;
         }
     }

@@ -41,17 +41,19 @@ public class PlayerMovementPresenter : MonoBehaviour
         if (_isGameStarted)
         {
             transform.localPosition += _movementDirection * Time.deltaTime * _speed;
-            //_playerModel.WorldPosition.Value = new Vector2(transform.localPosition.x, transform.localPosition.z);
             _playerModel.Position.Value = _quadTools.WorldToQuadPosition(new Vector2(transform.localPosition.x, transform.localPosition.z));
 
-            // if (!_roadModel.IsThereQuadBeneath(_quadTools.WorldToQuadPosition(_playerModel.WorldPosition.Value)))//can improve
-           // Debug.Log(!_roadModel.IsThereQuadBeneath(_playerModel.WorldPosition.Value));
-            if (_quadTools.IsQuadPosChanged(_playerModel.Position.Value) &&
-                !_roadModel.IsThereQuadBeneath(_playerModel.Position.Value))
-            {
-                _speed = 0f;
-                _gameOverModel.GameOver();
-            }
+            CheckWayPosition();
+        }
+    }
+
+    private void CheckWayPosition()
+    {
+        if (_quadTools.IsQuadPosChanged(_playerModel.Position.Value) &&
+            !_roadModel.IsThereQuadBeneath(_playerModel.Position.Value))
+        {
+            _speed = 0f;
+            _gameOverModel.GameOver();
         }
     }
 

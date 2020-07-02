@@ -28,9 +28,6 @@ public class QuadTools
 
     public bool IsQuadPosChanged(Vector2 currentPos)
     {
-        // Vector2Int currentPos=WorldToQuadPosition(worldPos);
-        //Debug.Log("prev "+previousQuadPos);
-        //Debug.Log("current "+currentPos);
         if (currentPos==previousQuadPos)
         {
             return false;
@@ -38,7 +35,6 @@ public class QuadTools
         else
         {
             previousQuadPos = currentPos;
-            //Debug.Log("Cahnged");
             return true;
         }
     }

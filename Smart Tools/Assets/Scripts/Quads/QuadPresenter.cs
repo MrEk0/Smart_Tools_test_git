@@ -14,8 +14,6 @@ public class QuadPresenter : ReactivePresenter<QuadModel>
     private RoadModel _roadModel;
     private QuadTools _quadTools;
 
-    private float quadSize;
-
     [Inject]
     private  void Construct(Vector2 modelPos, QuadModel quadModel, PlayerModel player, RoadModel roadModel, QuadTools quadTools)
     {
@@ -26,11 +24,6 @@ public class QuadPresenter : ReactivePresenter<QuadModel>
         _quadModel = quadModel;
         _quadTools = quadTools;
         SetModel(_quadModel);
-    }
-
-    private void Awake()//can improve?
-    {
-        quadSize = transform.localScale.x;
     }
 
     protected override void OnEnable()
@@ -47,19 +40,15 @@ public class QuadPresenter : ReactivePresenter<QuadModel>
 
     private void OnPositionChanged()
     {
-        name = "Quad " + _quadModel.Position.Value;//delete
-        //transform.localPosition = new Vector3(quadSize * _quadModel.Position.Value.x, 0, quadSize * _quadModel.Position.Value.y);
         transform.localPosition = _quadTools.QuadToWorldPosition(_quadModel.Position.Value);
     }
 
     private void OnPlayerPositionChanged()
     {
-        //Vector2Int playerPos = _playerModel.WorldToQuadPosition();
-        //Debug.Log(playerPos)
         if (_playerModel.Position.Value.x> _quadModel.Position.Value.x ||
             _playerModel.Position.Value.y> _quadModel.Position.Value.y)
         {
-            if (_roadModel.IsQuadStartPanel(this))//!!!!!
+            if (_roadModel.IsQuadStartPanel(this))
                 return;
 
             gameObject.SetActive(false);
